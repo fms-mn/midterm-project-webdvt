@@ -1,0 +1,144 @@
+/* ============================================
+   Transaction Detail Page Styles
+   ============================================ */
+
+.detail-back-btn {
+  margin-bottom: var(--space-lg);
+}
+
+/* --- Detail Card --- */
+.detail-card {
+  max-width: 680px;
+  padding: var(--space-2xl);
+}
+
+.detail-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-xl);
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.detail-card__badge-row {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.detail-card__actions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+/* --- View Mode --- */
+.detail-card__body {
+  text-align: center;
+}
+
+.detail-icon-large {
+  font-size: 3.5rem;
+  margin-bottom: var(--space-md);
+  animation: float 3s ease-in-out infinite;
+}
+
+.detail-title {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: var(--space-sm);
+  color: var(--text-primary);
+}
+
+.detail-amount {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: var(--space-xl);
+}
+
+.detail-amount.income {
+  color: var(--color-income);
+}
+
+.detail-amount.expense {
+  color: var(--color-expense);
+}
+
+/* --- Detail Fields Grid --- */
+.detail-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+  text-align: left;
+  padding-top: var(--space-xl);
+  border-top: 1px solid var(--border-secondary);
+}
+
+.detail-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.detail-field--full {
+  grid-column: 1 / -1;
+}
+
+.detail-field__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+}
+
+.detail-field__value {
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* --- Edit Mode --- */
+.detail-card__edit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+
+@media (max-width: 560px) {
+  .detail-card {
+    padding: var(--space-lg);
+  }
+
+  .detail-card__header {
+    flex-direction: column;
+  }
+
+  .detail-amount {
+    font-size: 2rem;
+  }
+
+  .detail-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-card__actions {
+    width: 100%;
+  }
+
+  .detail-card__actions .btn {
+    flex: 1;
+  }
+}
