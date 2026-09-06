@@ -1,0 +1,286 @@
+/* ============================================
+   Dashboard Page Styles
+   ============================================ */
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-xl);
+  gap: var(--space-md);
+}
+
+@media (max-width: 560px) {
+  .dashboard-header {
+    flex-direction: column;
+  }
+  .dashboard-header .btn {
+    align-self: stretch;
+  }
+}
+
+/* --- Balance Cards --- */
+.balance-cards {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-2xl);
+}
+
+@media (max-width: 768px) {
+  .balance-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.balance-card {
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.balance-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+.balance-card::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  right: -30%;
+  width: 60%;
+  height: 80%;
+  background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.balance-card--net {
+  background: var(--gradient-primary);
+  color: white;
+  grid-row: span 1;
+}
+
+.balance-card--income {
+  background: var(--card-bg);
+  border: 1px solid var(--border-secondary);
+}
+
+.balance-card--expense {
+  background: var(--card-bg);
+  border: 1px solid var(--border-secondary);
+}
+
+.balance-card__icon {
+  font-size: 2rem;
+  margin-bottom: var(--space-sm);
+}
+
+.balance-card__label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.8;
+  margin-bottom: var(--space-xs);
+}
+
+.balance-card--net .balance-card__label {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.balance-card__amount {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.balance-card__amount.income {
+  color: var(--color-income);
+}
+
+.balance-card__amount.expense {
+  color: var(--color-expense);
+}
+
+.balance-card__amount.positive {
+  color: white;
+}
+
+.balance-card__amount.negative {
+  color: #fecaca;
+}
+
+.balance-card__subtitle {
+  font-size: 0.8125rem;
+  margin-top: var(--space-sm);
+  opacity: 0.8;
+}
+
+/* --- Filters Bar --- */
+.filters-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--border-secondary);
+}
+
+.filters-left {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-sm);
+}
+
+.filters-right {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.filter-select {
+  min-width: 140px;
+  font-size: 0.8125rem;
+  padding: 0.5rem 2rem 0.5rem 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .filters-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .filters-right {
+    flex-direction: column;
+  }
+  .filter-select {
+    width: 100%;
+  }
+}
+
+/* --- Transaction List --- */
+.transaction-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.transaction-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--card-bg);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  color: inherit;
+  transition: all var(--transition-base);
+  cursor: pointer;
+}
+
+.transaction-card:hover {
+  border-color: var(--accent-primary);
+  box-shadow: var(--shadow-md);
+  transform: translateX(4px);
+}
+
+.transaction-card__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  background: var(--bg-tertiary);
+  flex-shrink: 0;
+}
+
+.transaction-card__icon[data-category="food"] { background: rgba(245, 158, 11, 0.12); }
+.transaction-card__icon[data-category="transport"] { background: rgba(59, 130, 246, 0.12); }
+.transaction-card__icon[data-category="entertainment"] { background: rgba(236, 72, 153, 0.12); }
+.transaction-card__icon[data-category="bills"] { background: rgba(239, 68, 68, 0.12); }
+.transaction-card__icon[data-category="shopping"] { background: rgba(139, 92, 246, 0.12); }
+.transaction-card__icon[data-category="health"] { background: rgba(16, 185, 129, 0.12); }
+.transaction-card__icon[data-category="education"] { background: rgba(6, 182, 212, 0.12); }
+.transaction-card__icon[data-category="salary"] { background: rgba(34, 197, 94, 0.12); }
+.transaction-card__icon[data-category="freelance"] { background: rgba(249, 115, 22, 0.12); }
+
+.transaction-card__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.transaction-card__title {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.transaction-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.transaction-card__category {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+.transaction-card__date {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+.transaction-card__amount {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.transaction-card__amount.income {
+  color: var(--color-income);
+}
+
+.transaction-card__amount.expense {
+  color: var(--color-expense);
+}
+
+.transaction-card__arrow {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+  transition: transform var(--transition-base);
+}
+
+.transaction-card:hover .transaction-card__arrow {
+  transform: translateX(3px);
+  color: var(--accent-primary);
+}
+
+@media (max-width: 560px) {
+  .transaction-card {
+    padding: var(--space-md);
+    gap: var(--space-sm);
+  }
+  .transaction-card__icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+  .transaction-card__amount {
+    font-size: 0.875rem;
+  }
+  .transaction-card__arrow {
+    display: none;
+  }
+}
