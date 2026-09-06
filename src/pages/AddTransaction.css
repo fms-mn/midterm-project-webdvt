@@ -3,7 +3,7 @@
    ============================================ */
 
 .add-transaction__header {
-  margin-bottom: var(--space-xl);
+  margin-bottom: var(--space-2xl);
 }
 
 .add-transaction__header .btn-ghost {
@@ -12,18 +12,31 @@
 
 /* --- Form Container --- */
 .transaction-form {
-  max-width: 640px;
+  max-width: 860px;
   display: flex;
   flex-direction: column;
   gap: var(--space-xl);
-  padding: var(--space-2xl);
+  padding: var(--space-2xl) var(--space-3xl);
+}
+
+/* Two-column form layout for desktop */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-xl);
+}
+
+@media (max-width: 640px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* --- Type Selector Buttons --- */
 .type-selector {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-md);
+  gap: var(--space-lg);
 }
 
 .type-btn {
@@ -31,7 +44,7 @@
   flex-direction: column;
   align-items: center;
   gap: var(--space-sm);
-  padding: var(--space-lg);
+  padding: var(--space-xl);
   border: 2px solid var(--border-primary);
   border-radius: var(--radius-lg);
   background: var(--bg-tertiary);
@@ -62,12 +75,12 @@
 }
 
 .type-btn__icon {
-  font-size: 1.75rem;
+  font-size: 2rem;
 }
 
 .type-btn__label {
   font-weight: 600;
-  font-size: 0.9375rem;
+  font-size: 1rem;
   color: var(--text-primary);
 }
 
@@ -83,12 +96,12 @@
 .type-btn.active::after {
   content: '✓';
   position: absolute;
-  top: 8px;
-  right: 10px;
-  font-size: 0.75rem;
+  top: 10px;
+  right: 12px;
+  font-size: 0.8rem;
   font-weight: 700;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -115,13 +128,13 @@
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
-  padding: 0.5rem 0.875rem;
+  padding: 0.625rem 1rem;
   border: 1.5px solid var(--border-primary);
   border-radius: var(--radius-full);
   background: var(--bg-tertiary);
   cursor: pointer;
   transition: all var(--transition-base);
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   color: var(--text-secondary);
 }
 
@@ -139,17 +152,19 @@
 }
 
 .category-pill__icon {
-  font-size: 1rem;
+  font-size: 1.125rem;
 }
 
 .category-pill__name {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
 }
 
 /* --- Submit Button --- */
 .submit-btn {
   width: 100%;
   margin-top: var(--space-md);
+  padding: 1rem;
+  font-size: 1rem;
 }
 
 .submit-btn.submitting {
@@ -159,8 +174,8 @@
 
 .spinner {
   display: inline-block;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-top-color: white;
   border-radius: 50%;
@@ -168,14 +183,14 @@
 }
 
 /* --- Responsive --- */
-@media (max-width: 560px) {
+@media (max-width: 640px) {
   .transaction-form {
     padding: var(--space-lg);
     gap: var(--space-lg);
   }
 
   .type-btn {
-    padding: var(--space-md);
+    padding: var(--space-lg);
   }
 
   .type-btn__icon {

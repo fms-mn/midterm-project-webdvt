@@ -5,14 +5,15 @@
 .dashboard-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: var(--space-xl);
+  align-items: center;
+  margin-bottom: var(--space-2xl);
   gap: var(--space-md);
 }
 
 @media (max-width: 560px) {
   .dashboard-header {
     flex-direction: column;
+    align-items: flex-start;
   }
   .dashboard-header .btn {
     align-self: stretch;
@@ -22,12 +23,21 @@
 /* --- Balance Cards --- */
 .balance-cards {
   display: grid;
-  grid-template-columns: 1.2fr 1fr 1fr;
-  gap: var(--space-lg);
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: var(--space-xl);
   margin-bottom: var(--space-2xl);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
+  .balance-cards {
+    grid-template-columns: 1fr 1fr;
+  }
+  .balance-card--net {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 560px) {
   .balance-cards {
     grid-template-columns: 1fr;
   }
@@ -35,7 +45,7 @@
 
 .balance-card {
   border-radius: var(--radius-xl);
-  padding: var(--space-xl);
+  padding: var(--space-xl) var(--space-2xl);
   position: relative;
   overflow: hidden;
   transition: transform var(--transition-base), box-shadow var(--transition-base);
@@ -74,12 +84,12 @@
 }
 
 .balance-card__icon {
-  font-size: 2rem;
+  font-size: 2.25rem;
   margin-bottom: var(--space-sm);
 }
 
 .balance-card__label {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -93,7 +103,7 @@
 
 .balance-card__amount {
   font-family: var(--font-display);
-  font-size: 1.75rem;
+  font-size: 2rem;
   font-weight: 800;
   line-height: 1.2;
 }
@@ -115,7 +125,7 @@
 }
 
 .balance-card__subtitle {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   margin-top: var(--space-sm);
   opacity: 0.8;
 }
@@ -125,8 +135,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-md);
-  margin-bottom: var(--space-lg);
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
   padding-bottom: var(--space-md);
   border-bottom: 1px solid var(--border-secondary);
 }
@@ -139,13 +149,13 @@
 
 .filters-right {
   display: flex;
-  gap: var(--space-sm);
+  gap: var(--space-md);
 }
 
 .filter-select {
-  min-width: 140px;
-  font-size: 0.8125rem;
-  padding: 0.5rem 2rem 0.5rem 0.75rem;
+  min-width: 180px;
+  font-size: 0.875rem;
+  padding: 0.625rem 2.5rem 0.625rem 1rem;
 }
 
 @media (max-width: 640px) {
@@ -171,8 +181,8 @@
 .transaction-card {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
-  padding: var(--space-md) var(--space-lg);
+  gap: var(--space-lg);
+  padding: var(--space-lg) var(--space-xl);
   background: var(--card-bg);
   border: 1px solid var(--border-secondary);
   border-radius: var(--radius-lg);
@@ -189,13 +199,13 @@
 }
 
 .transaction-card__icon {
-  width: 44px;
-  height: 44px;
+  width: 52px;
+  height: 52px;
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   background: var(--bg-tertiary);
   flex-shrink: 0;
 }
@@ -217,7 +227,7 @@
 
 .transaction-card__title {
   font-weight: 600;
-  font-size: 0.9375rem;
+  font-size: 1rem;
   margin-bottom: 0.25rem;
   white-space: nowrap;
   overflow: hidden;
@@ -227,24 +237,24 @@
 .transaction-card__meta {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: var(--space-md);
   flex-wrap: wrap;
 }
 
 .transaction-card__category {
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--text-tertiary);
 }
 
 .transaction-card__date {
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--text-tertiary);
 }
 
 .transaction-card__amount {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 1rem;
+  font-size: 1.125rem;
   white-space: nowrap;
 }
 
@@ -273,12 +283,12 @@
     gap: var(--space-sm);
   }
   .transaction-card__icon {
-    width: 36px;
-    height: 36px;
-    font-size: 1rem;
+    width: 40px;
+    height: 40px;
+    font-size: 1.125rem;
   }
   .transaction-card__amount {
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
   }
   .transaction-card__arrow {
     display: none;

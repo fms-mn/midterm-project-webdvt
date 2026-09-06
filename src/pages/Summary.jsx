@@ -260,6 +260,8 @@ function Summary() {
             </div>
           </div>
 
+          {/* Category Breakdowns — Side by side on desktop */}
+          <div className="breakdowns-grid">
           {/* Category Breakdown — Expenses */}
           {analytics.sortedCategories.length > 0 && (
             <div className="breakdown-card card animate-fadeInUp" id="expense-breakdown">
@@ -305,6 +307,7 @@ function Summary() {
               </div>
             </div>
           )}
+          </div>
         </>
       )}
     </div>

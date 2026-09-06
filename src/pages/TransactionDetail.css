@@ -8,8 +8,8 @@
 
 /* --- Detail Card --- */
 .detail-card {
-  max-width: 680px;
-  padding: var(--space-2xl);
+  max-width: 860px;
+  padding: var(--space-2xl) var(--space-3xl);
 }
 
 .detail-card__header {

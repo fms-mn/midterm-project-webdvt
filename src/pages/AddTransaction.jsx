@@ -216,6 +216,8 @@ function AddTransaction() {
           {errors.title && <div className="form-error" id="error-title">⚠ {errors.title}</div>}
         </div>
 
+        {/* Amount & Date — side by side on desktop */}
+        <div className="form-grid">
         {/* Amount */}
         <div className="form-group">
           <label className="form-label" htmlFor="input-amount">Amount (₱) *</label>
@@ -231,6 +233,21 @@ function AddTransaction() {
             step="0.01"
           />
           {errors.amount && <div className="form-error" id="error-amount">⚠ {errors.amount}</div>}
+        </div>
+
+        {/* Date */}
+        <div className="form-group">
+          <label className="form-label" htmlFor="input-date">Date *</label>
+          <input
+            type="date"
+            className={`form-input ${errors.date ? 'error' : ''}`}
+            id="input-date"
+            name="date"
+            value={form.date}
+            onChange={handleChange}
+          />
+          {errors.date && <div className="form-error" id="error-date">⚠ {errors.date}</div>}
+        </div>
         </div>
 
         {/* Category Pills */}
@@ -252,20 +269,6 @@ function AddTransaction() {
             ))}
           </div>
           {errors.category && <div className="form-error" id="error-category">⚠ {errors.category}</div>}
-        </div>
-
-        {/* Date */}
-        <div className="form-group">
-          <label className="form-label" htmlFor="input-date">Date *</label>
-          <input
-            type="date"
-            className={`form-input ${errors.date ? 'error' : ''}`}
-            id="input-date"
-            name="date"
-            value={form.date}
-            onChange={handleChange}
-          />
-          {errors.date && <div className="form-error" id="error-date">⚠ {errors.date}</div>}
         </div>
 
         {/* Notes (Optional) */}

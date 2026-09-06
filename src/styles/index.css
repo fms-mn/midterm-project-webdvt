@@ -283,9 +283,9 @@ img {
    ============================================ */
 .container {
   width: 100%;
-  max-width: 1120px;
+  max-width: 1440px;
   margin: 0 auto;
-  padding: 0 var(--space-lg);
+  padding: 0 var(--space-2xl);
 }
 
 .page-wrapper {
@@ -729,7 +729,7 @@ img {
   }
 
   .container {
-    padding: 0 var(--space-md);
+    padding: 0 var(--space-lg);
   }
 
   .page-wrapper {
