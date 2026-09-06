@@ -1,0 +1,204 @@
+/* ============================================
+   Navbar Styles — BroTrack Navigation
+   ============================================ */
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  background: var(--navbar-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-secondary);
+  transition: background var(--transition-base), border-color var(--transition-base);
+}
+
+.navbar .container {
+  max-width: 1120px;
+}
+
+.navbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  gap: var(--space-lg);
+}
+
+/* --- Brand --- */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  text-decoration: none;
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+
+.navbar-logo {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.navbar-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* --- Nav Links --- */
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.navbar-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 0.5rem 0.875rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: all var(--transition-base);
+  position: relative;
+}
+
+.navbar-link:hover {
+  color: var(--text-primary);
+  background: var(--accent-primary-light);
+}
+
+.navbar-link.active {
+  color: var(--accent-primary);
+  background: var(--accent-primary-light);
+  font-weight: 600;
+}
+
+.navbar-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 2px;
+  background: var(--accent-primary);
+  border-radius: var(--radius-full);
+}
+
+.navbar-link svg {
+  flex-shrink: 0;
+}
+
+/* --- Theme Toggle --- */
+.theme-toggle {
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.toggle-track {
+  position: relative;
+  width: 56px;
+  height: 30px;
+  border-radius: var(--radius-full);
+  background: var(--bg-tertiary);
+  border: 1.5px solid var(--border-primary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6px;
+  transition: all var(--transition-base);
+  overflow: hidden;
+}
+
+.toggle-track.dark {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.toggle-icon {
+  font-size: 0.75rem;
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+  transition: opacity var(--transition-base);
+}
+
+.toggle-track.light .sun {
+  opacity: 1;
+}
+
+.toggle-track.light .moon {
+  opacity: 0.4;
+}
+
+.toggle-track.dark .sun {
+  opacity: 0.4;
+}
+
+.toggle-track.dark .moon {
+  opacity: 1;
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+  transition: transform var(--transition-spring);
+}
+
+.toggle-track.dark .toggle-thumb {
+  transform: translateX(26px);
+  background: #818cf8;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .navbar-inner {
+    height: 56px;
+  }
+
+  .navbar-link span {
+    display: none;
+  }
+
+  .navbar-link {
+    padding: 0.5rem;
+  }
+
+  .navbar-title {
+    font-size: 1.1rem;
+  }
+
+  .toggle-track {
+    width: 48px;
+    height: 26px;
+  }
+
+  .toggle-thumb {
+    width: 18px;
+    height: 18px;
+  }
+
+  .toggle-track.dark .toggle-thumb {
+    transform: translateX(22px);
+  }
+}
