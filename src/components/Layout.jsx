@@ -11,12 +11,12 @@ import Navbar from './Navbar'
 
 function Layout() {
   return (
-    <>
+    <div className="app-shell">
       <Navbar />
-      <main className="container page-wrapper">
+      <main className="page-wrapper">
         <Outlet />
       </main>
-    </>
+    </div>
   )
 }
 

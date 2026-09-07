@@ -1,312 +1,123 @@
-/**
- * Summary.jsx — Spending breakdown and analytics page
- * Route: /summary
- * 
- * Features:
- * - Category-wise spending breakdown with visual percentage bars (pure CSS)
- * - Income vs Expense comparison with animated bars
- * - Total transactions count and stats
- * - Theme toggle prominently placed on this page
- * - Top spending categories ranking
- * 
- * PERFORMANCE OPTIMIZATION:
- * - React.memo wrapping the CategoryBar component to prevent re-renders
- *   when parent state changes but individual bar data hasn't changed.
- * - useMemo for all computed analytics (category totals, percentages)
- * - useCallback for theme toggle handler
- * 
- * This is the page that demonstrates performance optimization
- * for the rubric requirement.
- */
-import React, { useMemo, useCallback } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useTransactionContext } from '../context/TransactionContext'
-import { useTheme } from '../context/ThemeContext'
 import './Summary.css'
 
-/** Category config */
-const CATEGORY_ICONS = {
-  Food: '🍔', Transport: '🚗', Entertainment: '🎮', Bills: '📄',
-  Shopping: '🛍️', Health: '💊', Education: '📚', Salary: '💼',
-  Freelance: '💻', Other: '📦',
+const CATEGORY_ICONS = { Food: '🍔', Transport: '🚗', Entertainment: '🎮', Bills: '📄', Shopping: '🛍️', Health: '💊', Education: '📚', Salary: '💼', Freelance: '💻', Other: '📦' }
+const CATEGORY_COLORS = { Food: '#f59e0b', Transport: '#3b82f6', Entertainment: '#ec4899', Bills: '#ef4444', Shopping: '#8b5cf6', Health: '#10b981', Education: '#06b6d4', Salary: '#22c55e', Freelance: '#f97316', Other: '#6b7280' }
+
+function formatCurrency(amount, compact = false) {
+  return new Intl.NumberFormat('en-PH', { style: 'currency', currency: 'PHP', notation: compact ? 'compact' : 'standard', maximumFractionDigits: compact ? 1 : 2 }).format(amount || 0)
 }
 
-const CATEGORY_COLORS = {
-  Food: 'var(--cat-food)',
-  Transport: 'var(--cat-transport)',
-  Entertainment: 'var(--cat-entertainment)',
-  Bills: 'var(--cat-bills)',
-  Shopping: 'var(--cat-shopping)',
-  Health: 'var(--cat-health)',
-  Education: 'var(--cat-education)',
-  Salary: 'var(--cat-salary)',
-  Freelance: 'var(--cat-freelance)',
-  Other: 'var(--cat-other)',
-}
-
-/** Format currency */
-function formatCurrency(amount) {
-  return new Intl.NumberFormat('en-PH', {
-    style: 'currency', currency: 'PHP', minimumFractionDigits: 2,
-  }).format(amount)
-}
-
-/**
- * CategoryBar — PERFORMANCE OPTIMIZATION with React.memo
- * 
- * This component is wrapped in React.memo to prevent unnecessary re-renders.
- * Without memo, every CategoryBar would re-render whenever the Summary
- * component re-renders (e.g., on theme toggle), even if the bar's
- * props haven't changed. With memo, React skips rendering for bars
- * whose props (name, amount, percentage, color) are unchanged.
- * 
- * This is documented here as required by the rubric:
- * "Identify at least one place in your app where an unnecessary
- *  re-render could occur and fix it."
- */
-const CategoryBar = React.memo(function CategoryBar({ name, amount, percentage, color, icon, rank }) {
+const CategoryRow = React.memo(function CategoryRow({ item, total, index }) {
+  const percentage = total ? (item.amount / total) * 100 : 0
   return (
-    <div
-      className="category-bar animate-fadeInUp"
-      style={{ animationDelay: `${rank * 60}ms` }}
-    >
-      <div className="category-bar__header">
-        <div className="category-bar__label">
-          <span className="category-bar__icon">{icon}</span>
-          <span className="category-bar__name">{name}</span>
-        </div>
-        <div className="category-bar__values">
-          <span className="category-bar__amount">{formatCurrency(amount)}</span>
-          <span className="category-bar__percent">{percentage.toFixed(1)}%</span>
-        </div>
+    <div className="insight-category-row" style={{ '--delay': `${index * 45}ms` }}>
+      <span className="insight-category-icon" style={{ background: `${item.color}18` }}>{item.icon}</span>
+      <div className="insight-category-info">
+        <div><strong>{item.name}</strong><span>{percentage.toFixed(0)}%</span></div>
+        <div className="insight-category-track"><span style={{ width: `${percentage}%`, background: item.color }} /></div>
       </div>
-      <div className="category-bar__track">
-        <div
-          className="category-bar__fill"
-          style={{
-            width: `${percentage}%`,
-            background: color,
-          }}
-        />
-      </div>
+      <strong className="insight-category-amount">{formatCurrency(item.amount, true)}</strong>
     </div>
   )
 })
 
 function Summary() {
   const { transactions } = useTransactionContext()
-  const { theme, toggleTheme } = useTheme()
+  const [range, setRange] = useState('month')
 
-  /**
-   * PERFORMANCE OPTIMIZATION: useMemo
-   * Compute all analytics data only when transactions change.
-   * This prevents recalculation on every theme toggle or other re-render.
-   */
   const analytics = useMemo(() => {
-    const totalIncome = transactions
-      .filter(t => t.type === 'income')
-      .reduce((sum, t) => sum + t.amount, 0)
+    const now = new Date()
+    const filtered = transactions.filter(t => {
+      if (range === 'all') return true
+      const date = new Date(`${t.date}T00:00:00`)
+      if (range === 'month') return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear()
+      const threshold = new Date(now)
+      threshold.setDate(threshold.getDate() - 90)
+      return date >= threshold
+    })
+    const incomeItems = filtered.filter(t => t.type === 'income')
+    const expenseItems = filtered.filter(t => t.type === 'expense')
+    const totalIncome = incomeItems.reduce((sum, t) => sum + t.amount, 0)
+    const totalExpense = expenseItems.reduce((sum, t) => sum + t.amount, 0)
+    const expenseByCategory = Object.values(expenseItems.reduce((acc, t) => {
+      acc[t.category] ??= { name: t.category, amount: 0, icon: CATEGORY_ICONS[t.category] || CATEGORY_ICONS.Other, color: CATEGORY_COLORS[t.category] || CATEGORY_COLORS.Other }
+      acc[t.category].amount += t.amount
+      return acc
+    }, {})).sort((a, b) => b.amount - a.amount)
+    const incomeByCategory = Object.values(incomeItems.reduce((acc, t) => {
+      acc[t.category] ??= { name: t.category, amount: 0, icon: CATEGORY_ICONS[t.category] || CATEGORY_ICONS.Other, color: CATEGORY_COLORS[t.category] || CATEGORY_COLORS.Other }
+      acc[t.category].amount += t.amount
+      return acc
+    }, {})).sort((a, b) => b.amount - a.amount)
+    const savingRate = totalIncome > 0 ? ((totalIncome - totalExpense) / totalIncome) * 100 : 0
+    return { filtered, totalIncome, totalExpense, balance: totalIncome - totalExpense, expenseByCategory, incomeByCategory, savingRate }
+  }, [transactions, range])
 
-    const totalExpense = transactions
-      .filter(t => t.type === 'expense')
-      .reduce((sum, t) => sum + t.amount, 0)
-
-    // Category breakdown (expenses only for spending analysis)
-    const categoryTotals = {}
-    transactions
-      .filter(t => t.type === 'expense')
-      .forEach(t => {
-        categoryTotals[t.category] = (categoryTotals[t.category] || 0) + t.amount
-      })
-
-    // Sort categories by amount (highest first)
-    const sortedCategories = Object.entries(categoryTotals)
-      .map(([name, amount]) => ({
-        name,
-        amount,
-        percentage: totalExpense > 0 ? (amount / totalExpense) * 100 : 0,
-        icon: CATEGORY_ICONS[name] || '📦',
-        color: CATEGORY_COLORS[name] || 'var(--cat-other)',
-      }))
-      .sort((a, b) => b.amount - a.amount)
-
-    // Income by category
-    const incomeCategoryTotals = {}
-    transactions
-      .filter(t => t.type === 'income')
-      .forEach(t => {
-        incomeCategoryTotals[t.category] = (incomeCategoryTotals[t.category] || 0) + t.amount
-      })
-
-    const sortedIncomeCategories = Object.entries(incomeCategoryTotals)
-      .map(([name, amount]) => ({
-        name,
-        amount,
-        percentage: totalIncome > 0 ? (amount / totalIncome) * 100 : 0,
-        icon: CATEGORY_ICONS[name] || '📦',
-        color: CATEGORY_COLORS[name] || 'var(--cat-other)',
-      }))
-      .sort((a, b) => b.amount - a.amount)
-
-    const maxAmount = Math.max(totalIncome, totalExpense, 1)
-
-    return {
-      totalIncome,
-      totalExpense,
-      netBalance: totalIncome - totalExpense,
-      totalTransactions: transactions.length,
-      incomeCount: transactions.filter(t => t.type === 'income').length,
-      expenseCount: transactions.filter(t => t.type === 'expense').length,
-      sortedCategories,
-      sortedIncomeCategories,
-      incomePercentage: (totalIncome / maxAmount) * 100,
-      expensePercentage: (totalExpense / maxAmount) * 100,
-    }
-  }, [transactions])
-
-  // useCallback to prevent toggle function recreation
-  const handleToggle = useCallback(() => {
-    toggleTheme()
-  }, [toggleTheme])
+  const expenseShare = analytics.totalIncome + analytics.totalExpense ? (analytics.totalExpense / (analytics.totalIncome + analytics.totalExpense)) * 100 : 0
+  const topCategory = analytics.expenseByCategory[0]
 
   return (
     <div className="summary animate-fadeInUp">
-      {/* Page Header */}
-      <div className="summary-header">
-        <div>
-          <h1 className="heading-xl">Summary</h1>
-          <p className="text-body">Your spending breakdown and analytics</p>
+      <header className="summary-header">
+        <div><p className="eyebrow">Financial analysis</p><h1 className="heading-xl">Insights</h1><p className="text-body">See the habits behind your balance.</p></div>
+        <div className="summary-actions">
+          <div className="range-switch" role="group" aria-label="Analytics date range">
+            <button className={range === 'month' ? 'active' : ''} onClick={() => setRange('month')}>This month</button>
+            <button className={range === 'quarter' ? 'active' : ''} onClick={() => setRange('quarter')}>90 days</button>
+            <button className={range === 'all' ? 'active' : ''} onClick={() => setRange('all')}>All time</button>
+          </div>
+          <Link to="/add" className="btn btn-primary">+ Add transaction</Link>
         </div>
-        <button
-          className="btn btn-secondary"
-          onClick={handleToggle}
-          id="summary-theme-toggle"
-        >
-          {theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
-        </button>
-      </div>
+      </header>
 
-      {transactions.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-state-icon">📊</div>
-          <h2 className="empty-state-title">No data to show</h2>
-          <p className="empty-state-text">
-            Add some transactions first to see your spending summary and analytics.
-          </p>
-          <Link to="/add" className="btn btn-primary btn-lg">
-            ➕ Add Transaction
-          </Link>
-        </div>
+      {!transactions.length ? (
+        <div className="insights-empty card"><span>↗</span><h2>No insights yet</h2><p>Add a few transactions and your category patterns, cash flow, and saving rate will show up here.</p><Link to="/add" className="btn btn-primary">Add first transaction</Link></div>
       ) : (
         <>
-          {/* Stats Overview */}
-          <div className="stats-grid">
-            <div className="stat-card animate-fadeInUp" id="stat-transactions">
-              <div className="stat-card__icon">📋</div>
-              <div className="stat-card__value">{analytics.totalTransactions}</div>
-              <div className="stat-card__label">Total Transactions</div>
-            </div>
-            <div className="stat-card animate-fadeInUp" style={{ animationDelay: '100ms' }} id="stat-income-count">
-              <div className="stat-card__icon">📥</div>
-              <div className="stat-card__value">{analytics.incomeCount}</div>
-              <div className="stat-card__label">Income Entries</div>
-            </div>
-            <div className="stat-card animate-fadeInUp" style={{ animationDelay: '200ms' }} id="stat-expense-count">
-              <div className="stat-card__icon">📤</div>
-              <div className="stat-card__value">{analytics.expenseCount}</div>
-              <div className="stat-card__label">Expense Entries</div>
-            </div>
-            <div className="stat-card animate-fadeInUp" style={{ animationDelay: '300ms' }} id="stat-net-balance">
-              <div className="stat-card__icon">{analytics.netBalance >= 0 ? '📈' : '📉'}</div>
-              <div className={`stat-card__value ${analytics.netBalance >= 0 ? 'positive' : 'negative'}`}>
-                {formatCurrency(analytics.netBalance)}
-              </div>
-              <div className="stat-card__label">Net Balance</div>
-            </div>
-          </div>
+          <section className="insight-stats">
+            <article className="insight-stat primary"><span>Net cash flow</span><strong className={analytics.balance < 0 ? 'negative' : ''}>{formatCurrency(analytics.balance)}</strong><small>{analytics.filtered.length} transactions in this range</small></article>
+            <article className="insight-stat"><span>Total income</span><strong className="income">{formatCurrency(analytics.totalIncome)}</strong><small>{analytics.filtered.filter(t => t.type === 'income').length} income entries</small></article>
+            <article className="insight-stat"><span>Total expenses</span><strong>{formatCurrency(analytics.totalExpense)}</strong><small>{analytics.filtered.filter(t => t.type === 'expense').length} expense entries</small></article>
+            <article className="insight-stat"><span>Saving rate</span><strong className={analytics.savingRate < 0 ? 'negative' : 'income'}>{analytics.savingRate.toFixed(0)}%</strong><small>{analytics.totalIncome ? 'of income kept' : 'Add income to calculate'}</small></article>
+          </section>
 
-          {/* Income vs Expense Comparison */}
-          <div className="comparison-card card animate-fadeInUp" id="income-expense-comparison">
-            <h3 className="heading-md" style={{ marginBottom: 'var(--space-xl)' }}>
-              Income vs Expenses
-            </h3>
-            
-            <div className="comparison-bars">
-              <div className="comparison-row">
-                <div className="comparison-row__label">
-                  <span>📥 Income</span>
-                  <span className="comparison-row__amount income">{formatCurrency(analytics.totalIncome)}</span>
-                </div>
-                <div className="comparison-row__track">
-                  <div
-                    className="comparison-row__fill income"
-                    style={{ width: `${analytics.incomePercentage}%` }}
-                  />
+          <div className="insights-grid">
+            <section className="spending-mix card">
+              <div className="insight-section-title"><div><p className="eyebrow">Money mix</p><h2 className="heading-md">Income vs spending</h2></div><span>{range === 'month' ? 'Current month' : range === 'quarter' ? 'Last 90 days' : 'All records'}</span></div>
+              <div className="mix-content">
+                <div className="donut" style={{ '--expense-share': `${expenseShare * 3.6}deg` }}><div><strong>{formatCurrency(analytics.totalIncome + analytics.totalExpense, true)}</strong><span>total flow</span></div></div>
+                <div className="mix-legend">
+                  <div><i className="income"/><span>Income<small>{formatCurrency(analytics.totalIncome)}</small></span></div>
+                  <div><i className="expense"/><span>Expenses<small>{formatCurrency(analytics.totalExpense)}</small></span></div>
+                  <div className="mix-note"><strong>{analytics.balance >= 0 ? 'Positive cash flow' : 'Expenses are ahead'}</strong><small>{analytics.balance >= 0 ? `${formatCurrency(analytics.balance)} stayed in your balance.` : `${formatCurrency(Math.abs(analytics.balance))} more went out than came in.`}</small></div>
                 </div>
               </div>
+            </section>
 
-              <div className="comparison-row">
-                <div className="comparison-row__label">
-                  <span>📤 Expenses</span>
-                  <span className="comparison-row__amount expense">{formatCurrency(analytics.totalExpense)}</span>
-                </div>
-                <div className="comparison-row__track">
-                  <div
-                    className="comparison-row__fill expense"
-                    style={{ width: `${analytics.expensePercentage}%` }}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+            <section className="top-category-card">
+              <p className="eyebrow">Largest expense</p>
+              <span className="top-category-emoji">{topCategory?.icon || '◎'}</span>
+              <h2>{topCategory?.name || 'No spending in range'}</h2>
+              <strong>{topCategory ? formatCurrency(topCategory.amount) : formatCurrency(0)}</strong>
+              <p>{topCategory && analytics.totalExpense ? `${((topCategory.amount / analytics.totalExpense) * 100).toFixed(0)}% of all spending in this range.` : 'Choose another range or add an expense.'}</p>
+            </section>
 
-          {/* Category Breakdowns — Side by side on desktop */}
-          <div className="breakdowns-grid">
-          {/* Category Breakdown — Expenses */}
-          {analytics.sortedCategories.length > 0 && (
-            <div className="breakdown-card card animate-fadeInUp" id="expense-breakdown">
-              <div className="breakdown-card__header">
-                <h3 className="heading-md">Spending by Category</h3>
-                <span className="text-small">{analytics.sortedCategories.length} categories</span>
+            <section className="category-breakdown card">
+              <div className="insight-section-title"><div><p className="eyebrow">Expenses</p><h2 className="heading-md">Spending by category</h2></div><span>{analytics.expenseByCategory.length} categories</span></div>
+              <div className="insight-category-list">
+                {analytics.expenseByCategory.length ? analytics.expenseByCategory.map((item, index) => <CategoryRow key={item.name} item={item} total={analytics.totalExpense} index={index}/>) : <p className="inline-empty">No expenses found in this range.</p>}
               </div>
-              <div className="category-bars">
-                {analytics.sortedCategories.map((cat, index) => (
-                  <CategoryBar
-                    key={cat.name}
-                    name={cat.name}
-                    amount={cat.amount}
-                    percentage={cat.percentage}
-                    color={cat.color}
-                    icon={cat.icon}
-                    rank={index}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
+            </section>
 
-          {/* Category Breakdown — Income */}
-          {analytics.sortedIncomeCategories.length > 0 && (
-            <div className="breakdown-card card animate-fadeInUp" id="income-breakdown">
-              <div className="breakdown-card__header">
-                <h3 className="heading-md">Income by Source</h3>
-                <span className="text-small">{analytics.sortedIncomeCategories.length} sources</span>
+            <section className="category-breakdown card">
+              <div className="insight-section-title"><div><p className="eyebrow">Income</p><h2 className="heading-md">Income by source</h2></div><span>{analytics.incomeByCategory.length} sources</span></div>
+              <div className="insight-category-list">
+                {analytics.incomeByCategory.length ? analytics.incomeByCategory.map((item, index) => <CategoryRow key={item.name} item={item} total={analytics.totalIncome} index={index}/>) : <p className="inline-empty">No income found in this range.</p>}
               </div>
-              <div className="category-bars">
-                {analytics.sortedIncomeCategories.map((cat, index) => (
-                  <CategoryBar
-                    key={cat.name}
-                    name={cat.name}
-                    amount={cat.amount}
-                    percentage={cat.percentage}
-                    color={cat.color}
-                    icon={cat.icon}
-                    rank={index}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
+            </section>
           </div>
         </>
       )}
